@@ -1,12 +1,13 @@
 #ifndef ECL_SLOWJSON_HPP
 #define ECL_SLOWJSON_HPP
 
-#include <iostream>
-#include <vector>
-#include <string>
-#include <stack>
-#include <variant>
 #include <exception>
+#include <fstream>
+#include <iostream>
+#include <stack>
+#include <string>
+#include <variant>
+#include <vector>
 
 /**
  * @brief Tokenize -> Analysis -> Generate Json object
@@ -76,7 +77,7 @@ public:
     }
 };
 
-class json {
+class json_storage {
 private:
     jsonobj parsed_obj;
 
@@ -85,7 +86,7 @@ private:
     std::vector<Token> token_stream;
 
 public:
-    json() {
+    json_storage() {
         parsed_obj.child = nullptr;
         parsed_obj.next = nullptr;
     }
@@ -371,7 +372,7 @@ public:
             // PARSE_OBJECT_INIT_CONTENT_WAIT, in case the package has no object.
             case PARSE_INIT: {
                 if (i.token_type != LBRACE)
-                    throw std::runtime_error("Bad Json: Not starting with {\n");
+                    throw std::runtime_error("Bad Json: Not starting with '{'.\n");
                 p->child = new jsonobj();
                 p->type = TOP;
 
@@ -406,7 +407,7 @@ public:
                     p = p->next;
                 } break;
                 default:
-                    throw std::runtime_error("Bad Json: Bad expression\n");
+                    throw std::runtime_error("Bad Json: Bad expression.\n");
                 }
             } break;
 
@@ -415,7 +416,7 @@ public:
             // PARSE_COLON_WAIT.
             case PARSE_NAME_WAIT: {
                 if (i.token_type != STRING)
-                    throw std::runtime_error("Bad Json: Bad syntax\n");
+                    throw std::runtime_error("Bad Json: Bad syntax.\n");
                 // Storing the name into name_tmp, waiting for the compelete unit
                 // to complete.
                 name_tmp = i.token_value;
@@ -502,7 +503,7 @@ public:
                     p = p->next;
                 } break;
                 default:
-                    throw std::runtime_error("Bad Json: Illegal value\n");
+                    throw std::runtime_error("Bad Json: Illegal value.\n");
                 }
             } break;
 
@@ -525,7 +526,7 @@ public:
                     p = p->next;
                 } break;
                 default:
-                    throw std::runtime_error("Bad Json: Bad syntax\n");
+                    throw std::runtime_error("Bad Json: Bad syntax.\n");
                 }
             } break;
 
@@ -533,7 +534,7 @@ public:
             // expecting COLON.
             case PARSE_COLON_WAIT: {
                 if (i.token_type != COLON)
-                    throw std::runtime_error("Bad Json: Bad syntax\n");
+                    throw std::runtime_error("Bad Json: Bad syntax.\n");
                 // Transforming
                 machine_status.top() = PARSE_VALUE_WAIT;
             } break;
@@ -704,7 +705,7 @@ public:
                     p = p->next;
                 } break;
                 default:
-                    throw std::runtime_error("Bad Json: Bad syntax\n");
+                    throw std::runtime_error("Bad Json: Bad syntax.\n");
                 }
             } break;
             }
