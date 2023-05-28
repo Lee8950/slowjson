@@ -614,6 +614,9 @@ public:
                     p->next = new jsonobj();
                     p = p->next;
                 } break;
+                default:
+                    throw std::runtime_error("Bad Json: Bad token stream.\n");
+                    break;
                 }
             } break;
 
@@ -708,6 +711,10 @@ public:
                     throw std::runtime_error("Bad Json: Bad syntax.\n");
                 }
             } break;
+
+            default:
+                throw std::runtime_error("Bad Json: Bad status.\n");
+                break;
             }
         }
     }
